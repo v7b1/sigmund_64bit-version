@@ -56,9 +56,10 @@
 #endif
 
 /* the following is needed only to declare pd_fft() as exportable in MSW */
-#include "m_pd.h"
+//#include "m_pd.h"			// vb, we don't really need this
 
-#define REAL t_sample
+//#define REAL t_sample	// vb, with this we have to include t_sample definition from m_pd.h (which might clash with max's t_sample definition...)
+#define REAL float			// vb, CHANGED to FLOAT, vb - try to resolve conflicts with t_sample definition in "z_dsp.h"
 #define GOOD_TRIG
 
 #ifdef GOOD_TRIG
@@ -398,26 +399,26 @@ void mayer_ifft(int n, REAL *real, REAL *imag)
 
 void mayer_realfft(int n, REAL *real)
 {
- REAL a,b,c,d;
- int i,j,k;
- mayer_fht(real,n);
- for (i=1,j=n-1,k=n/2;i<k;i++,j--) {
-  a = real[i];
-  b = real[j];
-  real[j] = (a-b)*0.5;
-  real[i] = (a+b)*0.5;
- }
+	REAL a,b; //,c,d;
+	int i,j,k;
+	mayer_fht(real,n);
+	for (i=1,j=n-1,k=n/2;i<k;i++,j--) {
+		a = real[i];
+		b = real[j];
+		real[j] = (a-b)*0.5;
+		real[i] = (a+b)*0.5;
+	}
 }
 
 void mayer_realifft(int n, REAL *real)
 {
- REAL a,b,c,d;
- int i,j,k;
- for (i=1,j=n-1,k=n/2;i<k;i++,j--) {
-  a = real[i];
-  b = real[j];
-  real[j] = (a-b);
-  real[i] = (a+b);
- }
- mayer_fht(real,n);
+	REAL a,b; //,c,d;
+	int i,j,k;
+	for (i=1,j=n-1,k=n/2;i<k;i++,j--) {
+		a = real[i];
+		b = real[j];
+		real[j] = (a-b);
+		real[i] = (a+b);
+	}
+	mayer_fht(real,n);
 }

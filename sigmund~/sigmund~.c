@@ -1,3 +1,5 @@
+
+
 /* Copyright (c) 2005 Miller Puckette.  BSD licensed.  No warranties. */
 
 /*
@@ -13,8 +15,14 @@
 and usable in other contexts.  The one external requirement is a real
 single-precision FFT, invoked as in the Mayer one: */
 
-#ifdef NT
-__declspec(dllimport) extern
+
+/* trying to make a painless update to maxmsp 64 bit, june 2015, vb */
+
+#define MSP				// compile a 64 bit version for MaxMSP
+
+
+#ifdef NT		//#ifdef _MSC_VER /* this is only needed with Microsoft's compiler */
+__declspec(dllimport) extern	
 #endif
 void mayer_realfft(int npoints, float *buf);
 
@@ -229,6 +237,9 @@ static void sigmund_remask(int maxbin, int bestindex, float powmask,
             maskbuf[bin] = mymask;
     } 
 }
+
+
+#pragma mark GET RAW PEAKS -------------
 
 static void sigmund_getrawpeaks(int npts, float *insamps,
     int npeak, t_peak *peakv, int *nfound, float *power, float srate, int loud,
@@ -762,10 +773,11 @@ static void notefinder_doit(t_notefinder *x, float freq, float power,
 }
 
 /**************** object structure for Pd and Max. *********************/ 
-
+#pragma mark MSP+ Pd Object structure ---------
 /* From here onward, the code is specific to eithr Pd, Max, or both.  If
 neither "PD 'nor "MSP" is defined, none of this is compiled, so that the
 whole file can be included in other, non-PD and non-Max projects.  */
+
 #ifdef PD
 #include "m_pd.h"
 #endif
@@ -778,6 +790,7 @@ whole file can be included in other, non-PD and non-Max projects.  */
 typedef float t_floatarg;
 #define t_resizebytes(a, b, c) t_resizebytes((char *)(a), (b), (c))
 #endif
+ 
 
 #if (defined(PD) || defined (MSP))
 
@@ -828,7 +841,7 @@ typedef struct _sigmund
     t_pxobject x_obj;
     void *obex;
     void *x_clock;
-    t_sample *x_inbuf2; /* extra input buffer to eat clock/DSP jitter */
+    float *x_inbuf2; /* extra input buffer to eat clock/DSP jitter */	// vb, CHANGED from T_SAMPLE to FLOAT
 #endif /* MSP */
     t_varout *x_varoutv;
     int x_nvarout;
@@ -837,7 +850,7 @@ typedef struct _sigmund
     int x_npts;         /* number of points in analysis window */
     int x_npeak;        /* number of peaks to find */
     int x_loud;         /* debug level */
-    t_sample *x_inbuf;  /* input buffer */
+    float *x_inbuf;  /* input buffer */					// vb, CHANGED from T_SAMPLE to FLOAT
     int x_infill;       /* number of points filled */
     int x_countdown;    /* countdown to start filling buffer */
     int x_hop;          /* samples between analyses */ 
@@ -900,19 +913,19 @@ static void sigmund_npts(t_sigmund *x, t_floatarg f)
     {
         if (x->x_inbuf)
         {
-            x->x_inbuf = (t_sample *)t_resizebytes(x->x_inbuf,
-                sizeof(*x->x_inbuf) * nwas, sizeof(*x->x_inbuf) * npts);
+            x->x_inbuf = (float *)t_resizebytes(x->x_inbuf,			
+                sizeof(*x->x_inbuf) * nwas, sizeof(*x->x_inbuf) * npts);		// vb, CHANGED from T_SAMPLE to FLOAT 
 #ifdef MSP
-            x->x_inbuf2 = (t_sample *)t_resizebytes(x->x_inbuf2,
-                sizeof(*x->x_inbuf2) * nwas, sizeof(*x->x_inbuf2) * npts);
+            x->x_inbuf2 = (float *)t_resizebytes(x->x_inbuf2,
+                sizeof(*x->x_inbuf2) * nwas, sizeof(*x->x_inbuf2) * npts);	// vb, CHANGED from T_SAMPLE to FLOAT
 #endif
         }
         else
         {
-            x->x_inbuf = (t_sample *)getbytes(sizeof(*x->x_inbuf) * npts);
+            x->x_inbuf = (float *)getbytes(sizeof(*x->x_inbuf) * npts);		// vb, CHANGED from T_SAMPLE to FLOAT
             memset((char *)(x->x_inbuf), 0, sizeof(*x->x_inbuf) * npts);
 #ifdef MSP
-            x->x_inbuf2 = (t_sample *)getbytes(sizeof(*x->x_inbuf2) * npts);
+            x->x_inbuf2 = (float *)getbytes(sizeof(*x->x_inbuf2) * npts);	// vb, CHANGED from T_SAMPLE to FLOAT
             memset((char *)(x->x_inbuf2), 0, sizeof(*x->x_inbuf2) * npts);
 #endif
         }
@@ -970,6 +983,7 @@ static void sigmund_minpower(t_sigmund *x, t_floatarg f)
     x->x_minpower = f;
 }
 
+#pragma mark DO THE WORK + OUTPUT -------
 static void sigmund_doit(t_sigmund *x, int npts, float *arraypoints,
     int loud, float srate)
 {
@@ -1004,25 +1018,27 @@ static void sigmund_doit(t_sigmund *x, int npts, float *arraypoints,
                 outlet_float(v->v_outlet, sigmund_ftom(note));
             break;
         case OUT_PEAKS:
-            for (i = 0; i < nfound; i++)
-            {
-                t_atom at[5];
-                SETFLOAT(at, (float)i);
-                SETFLOAT(at+1, peakv[i].p_freq);
-                SETFLOAT(at+2, 2*peakv[i].p_amp);
-                SETFLOAT(at+3, 2*peakv[i].p_ampreal);
-                SETFLOAT(at+4, 2*peakv[i].p_ampimag);
-                outlet_list(v->v_outlet, 0, 5, at);   
-            }
+		for (i = 0; i < nfound; i++)
+		{
+			   t_atom at[5];
+			// vb, updated old SETFLOAT definitions to the newer "atom_setfloat"
+			   atom_setlong(at, i);	// vb, CHANGED to setlong. Max supports integers, and in this case it's useful to have
+			   atom_setfloat(at+1, peakv[i].p_freq);	
+			   atom_setfloat(at+2, 2*peakv[i].p_amp);
+			   atom_setfloat(at+3, 2*peakv[i].p_ampreal);
+			   atom_setfloat(at+4, 2*peakv[i].p_ampimag);
+			   outlet_list(v->v_outlet, 0, 5, at); 
+
+		}
             break;
         case OUT_TRACKS:
             for (i = 0; i < x->x_ntrack; i++)
             {
                 t_atom at[4];
-                SETFLOAT(at, (float)i);
-                SETFLOAT(at+1, x->x_trackv[i].p_freq);
-                SETFLOAT(at+2, 2*x->x_trackv[i].p_amp);
-                SETFLOAT(at+3, x->x_trackv[i].p_tmp);
+                atom_setlong(at, i);	// vb, CHANGED to setlong. Max supports integers, and in this case it's useful to have
+                atom_setfloat(at+1, x->x_trackv[i].p_freq);
+                atom_setfloat(at+2, 2*x->x_trackv[i].p_amp);
+                atom_setfloat(at+3, x->x_trackv[i].p_tmp);
                 outlet_list(v->v_outlet, 0, 4, at);   
             }
             break;
@@ -1043,6 +1059,28 @@ static void sigmund_dsp(t_sigmund *x, t_signal **sp)
     }
 }
 
+
+#pragma mark DSP SETUP -------
+#ifdef MSP
+// vb, 64-bit dsp method
+void sigmund_perform64(t_sigmund *x, t_object *dsp64, double **ins, long numins, 
+					   double **outs, long numouts, long sampleframes, long flags, void *userparam);
+
+void sigmund_dsp64(t_sigmund *x, t_object *dsp64, short *count, double samplerate, 
+				   long maxvectorsize, long flags) {
+	if (x->x_mode == MODE_STREAM) {
+		if (x->x_hop % maxvectorsize)
+			post("sigmund: adjusting hop size to %d",
+				 (x->x_hop = maxvectorsize * (x->x_hop / maxvectorsize)));
+		
+		object_method(dsp64, gensym("dsp_add64"), x, sigmund_perform64, 0, NULL);
+		
+		x->x_sr = samplerate;
+		if(x->x_sr <=0) x->x_sr  = 44100.0;
+	}
+}
+#endif
+
 static void sigmund_print(t_sigmund *x)
 {
     post("sigmund~ settings:");
@@ -1058,6 +1096,9 @@ static void sigmund_print(t_sigmund *x)
 
 static void sigmund_free(t_sigmund *x)
 {
+#ifdef MSP
+	dsp_free((t_pxobject *)x);			// vb, we need to call dsp_free!
+#endif
     if (x->x_inbuf)
     {
         freebytes(x->x_inbuf, x->x_npts * sizeof(*x->x_inbuf));
@@ -1071,6 +1112,8 @@ static void sigmund_free(t_sigmund *x)
 }
 
 #endif /* PD or MSP */
+
+#pragma mark Pd GLUE --------------------
 /*************************** Glue for Pd ************************/
 #ifdef PD
 
@@ -1400,7 +1443,7 @@ void sigmund_tilde_setup(void)
 #endif /* PD */
 
 /************************ Max/MSP glue **********************************/
-
+#pragma mark MSP GLUE --------------------
 /* -------------------------- MSP glue ------------------------- */
 #ifdef MSP
 static void *sigmund_class;
@@ -1419,6 +1462,41 @@ static void sigmund_tick(t_sigmund *x)
         x->x_inbuf[j] = x->x_inbuf2[i];
     sigmund_doit(x, x->x_npts, x->x_inbuf, x->x_loud, x->x_sr);
     x->x_loud = 0;
+}
+
+
+// vb, 64 bit signal input version
+void sigmund_perform64(t_sigmund *x, t_object *dsp64, double **ins, long numins, 
+					   double **outs, long numouts, long sampleframes, long flags, void *userparam)
+{
+	double *in = ins[0];
+	int n = sampleframes, j;
+	int infill = x->x_infill;
+	float *fp = x->x_inbuf2 + infill;				
+	if (infill < 0 || infill >= x->x_npts)
+		infill = 0;
+	/* for some reason this sometimes happens: */
+	if (!x->x_inbuf2) {
+		post("error!");
+		return;
+	}
+	
+	
+	for (j = 0; j < n; j++)
+	 {
+		//*fp++ = *in++;
+		*fp++ = (float)in[j];					// vb, CONVERT from DOUBLE to FLOAT
+		if (++infill == x->x_npts)
+			infill = 0, fp = x->x_inbuf2;
+	 }
+	x->x_infill = infill;
+	if (x->x_countdown <= 0)
+	 {
+		x->x_countdown = x->x_hop;
+		clock_delay(x->x_clock, 0);
+	 }
+	x->x_countdown -= n;
+	return;
 }
 
 static t_int *sigmund_perform(t_int *w)
@@ -1534,6 +1612,8 @@ static void *sigmund_new(t_symbol *s, long ac, t_atom *av)
     x->x_countdown = 0;
     sigmund_npts(x, x->x_npts);
     notefinder_init(&x->x_notefinder);
+	
+	
     return (x);
 }
 
@@ -1592,57 +1672,61 @@ void sigmund_assist(t_sigmund *x, void *b, long m, long a, char *s)
 {
 }
 
-int main()
+int C74_EXPORT main(void)
 {       
-    t_class *c;
-    long attrflags = 0;
-    t_symbol *sym_long = gensym("long"), *sym_float32 = gensym("float32");
-    
-    c = class_new("sigmund~", (method)sigmund_new,
-        (method)sigmund_free, sizeof(t_sigmund), (method)0L, A_GIMME, 0);
-    
-    class_obexoffset_set(c, calcoffset(t_sigmund, obex));
-    
-    class_addattr(c, attr_offset_new("npts", sym_long, attrflags,
-        (method)0L, (method)sigmund_npts_set,
-            calcoffset(t_sigmund, x_npts)));
-    class_addattr(c ,attr_offset_new("hop", sym_long, attrflags,
-        (method)0L, (method)sigmund_hop_set,
-            calcoffset(t_sigmund, x_hop)));
-    class_addattr(c ,attr_offset_new("maxfreq", sym_float32, attrflags,
-        (method)0L, (method)sigmund_maxfreq_set,
-            calcoffset(t_sigmund, x_maxfreq)));
-    class_addattr(c ,attr_offset_new("npeak", sym_long, attrflags,
-        (method)0L, (method)sigmund_npeak_set,
-            calcoffset(t_sigmund, x_npeak)));
-    class_addattr(c ,attr_offset_new("vibrato", sym_float32, attrflags,
-        (method)0L, (method)sigmund_vibrato_set,
-            calcoffset(t_sigmund, x_vibrato)));
-    class_addattr(c ,attr_offset_new("stabletime", sym_float32, attrflags,
-        (method)0L, (method)sigmund_stabletime_set,
-            calcoffset(t_sigmund, x_stabletime)));
-    class_addattr(c ,attr_offset_new("growth", sym_float32, attrflags,
-        (method)0L, (method)sigmund_growth_set,
-            calcoffset(t_sigmund, x_growth)));
-    class_addattr(c ,attr_offset_new("minpower", sym_float32, attrflags,
-        (method)0L, (method)sigmund_minpower_set,
-            calcoffset(t_sigmund, x_minpower)));
+	t_class *c;
+	long attrflags = 0;
+	t_symbol *sym_long = gensym("long"), *sym_float32 = gensym("float32");
 
-    class_addmethod(c, (method)sigmund_dsp, "dsp", A_CANT, 0);
-    class_addmethod(c, (method)sigmund_print, "print", 0);
-    class_addmethod(c, (method)sigmund_print, "printnext", A_DEFFLOAT, 0);
-    class_addmethod(c, (method)sigmund_assist, "assist", A_CANT, 0);
+	c = class_new("sigmund~", (method)sigmund_new,
+		(method)sigmund_free, sizeof(t_sigmund), (method)0L, A_GIMME, 0);
     
-    class_addmethod(c, (method)object_obex_dumpout, "dumpout", A_CANT, 0);
-    class_addmethod(c, (method)object_obex_quickref, "quickref", A_CANT, 0);
-    
-    class_dspinit(c);
+	class_obexoffset_set(c, calcoffset(t_sigmund, obex));
 
-    class_register(CLASS_BOX, c);
-    sigmund_class = c;
-    
-    post("sigmund~ v0.05");
-    return (0);
+	class_addattr(c, attr_offset_new("npts", sym_long, attrflags,
+		(method)0L, (method)sigmund_npts_set,
+			calcoffset(t_sigmund, x_npts)));
+	class_addattr(c ,attr_offset_new("hop", sym_long, attrflags,
+		(method)0L, (method)sigmund_hop_set,
+			calcoffset(t_sigmund, x_hop)));
+	class_addattr(c ,attr_offset_new("maxfreq", sym_float32, attrflags,
+		(method)0L, (method)sigmund_maxfreq_set,
+			calcoffset(t_sigmund, x_maxfreq)));
+	class_addattr(c ,attr_offset_new("npeak", sym_long, attrflags,
+		(method)0L, (method)sigmund_npeak_set,
+			calcoffset(t_sigmund, x_npeak)));
+	class_addattr(c ,attr_offset_new("vibrato", sym_float32, attrflags,
+		(method)0L, (method)sigmund_vibrato_set,
+			calcoffset(t_sigmund, x_vibrato)));
+	class_addattr(c ,attr_offset_new("stabletime", sym_float32, attrflags,
+		(method)0L, (method)sigmund_stabletime_set,
+			calcoffset(t_sigmund, x_stabletime)));
+	class_addattr(c ,attr_offset_new("growth", sym_float32, attrflags,
+		(method)0L, (method)sigmund_growth_set,
+			calcoffset(t_sigmund, x_growth)));
+	class_addattr(c ,attr_offset_new("minpower", sym_float32, attrflags,
+		(method)0L, (method)sigmund_minpower_set,
+			calcoffset(t_sigmund, x_minpower)));
+
+	class_addmethod(c, (method)sigmund_dsp, "dsp", A_CANT, 0);
+	class_addmethod(c, (method)sigmund_dsp64, "dsp64", A_CANT, 0);		// add a call to 64bit dsp routine
+	class_addmethod(c, (method)sigmund_print, "print", 0);
+	class_addmethod(c, (method)sigmund_print, "printnext", A_DEFFLOAT, 0);
+	class_addmethod(c, (method)sigmund_assist, "assist", A_CANT, 0);
+	
+	class_addmethod(c, (method)object_obex_dumpout, "dumpout", A_CANT, 0);
+	class_addmethod(c, (method)object_obex_quickref, "quickref", A_CANT, 0);
+	
+	class_dspinit(c);
+
+	class_register(CLASS_BOX, c);
+	sigmund_class = c;
+	
+	//post("sizeof t_float: %d", sizeof(t_float));
+	//post("sizeof t_sample: %d", sizeof(t_sample));
+
+	post("sigmund~ based on v0.05 -- 64bit version");
+	return (0);
 }
 
 
