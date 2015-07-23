@@ -52,20 +52,14 @@
 					PBXFileDataSource_Warnings_ColumnID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 459013002;
-			PBXWorkspaceStateSaveDate = 459013002;
+			PBXPerProjectTemplateStateSaveDate = 459344130;
+			PBXWorkspaceStateSaveDate = 459344130;
 		};
 		perUserProjectItems = {
-			3510C6A01B5817F40042C6C9 = 3510C6A01B5817F40042C6C9 /* PBXTextBookmark */;
-			3510C6A51B58188E0042C6C9 = 3510C6A51B58188E0042C6C9 /* PBXTextBookmark */;
-			3510C6A71B58188E0042C6C9 = 3510C6A71B58188E0042C6C9 /* PBXTextBookmark */;
-			3556B74D1B528AB600B8408F = 3556B74D1B528AB600B8408F /* PBXTextBookmark */;
-			3569A7A51B5816F400AEA2B0 = 3569A7A51B5816F400AEA2B0 /* PBXTextBookmark */;
-			358CD6A71B5BFA9700926312 = 358CD6A71B5BFA9700926312 /* PBXTextBookmark */;
-			358CD6B31B5BFB8E00926312 /* PBXTextBookmark */ = 358CD6B31B5BFB8E00926312 /* PBXTextBookmark */;
-			35961C8A1B41CCA100A5F475 = 35961C8A1B41CCA100A5F475 /* PBXTextBookmark */;
-			35961C8B1B41CCA100A5F475 = 35961C8B1B41CCA100A5F475 /* PBXTextBookmark */;
-			35961C8D1B41CCA100A5F475 = 35961C8D1B41CCA100A5F475 /* PBXTextBookmark */;
+			351E2E761B61090D00657EC6 /* PBXTextBookmark */ = 351E2E761B61090D00657EC6 /* PBXTextBookmark */;
+			3536B8831B6106BD007DE769 = 3536B8831B6106BD007DE769 /* PBXTextBookmark */;
+			3536B8841B6106BD007DE769 = 3536B8841B6106BD007DE769 /* PBXBookmark */;
+			3536B8851B6106BD007DE769 = 3536B8851B6106BD007DE769 /* PBXTextBookmark */;
 		};
 		sourceControlManager = 3588967417197817000564EB /* Source Control */;
 		userBuildSettings = {
@@ -74,33 +68,15 @@
 	2FBBEAD608F335360078DB84 /* max-external */ = {
 		activeExec = 0;
 	};
-	3510C6A01B5817F40042C6C9 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 3523B17117197C3500AAFD5C /* maxmspsdk.xcconfig */;
-		name = "maxmspsdk.xcconfig: 1";
-		rLen = 0;
-		rLoc = 0;
-		rType = 0;
-		vrLen = 1113;
-		vrLoc = 0;
-	};
-	3510C6A51B58188E0042C6C9 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		comments = "'dsp_add' is deprecated (declared at /Users/vb/project-files/C-prog/MaxSDK-6.1.4/myGitHub/MaxMSP-Projects/sigmund~/../../../c74support/msp-includes/z_dsp.h:257)";
-		fRef = 35DE5CEA1B39218100941F5C /* sigmund~.c */;
-		rLen = 1;
-		rLoc = 1057;
-		rType = 1;
-	};
-	3510C6A71B58188E0042C6C9 /* PBXTextBookmark */ = {
+	351E2E761B61090D00657EC6 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 35DE5CEA1B39218100941F5C /* sigmund~.c */;
 		name = "sigmund~.c: 1058";
 		rLen = 0;
 		rLoc = 34003;
 		rType = 0;
-		vrLen = 1243;
-		vrLoc = 33452;
+		vrLen = 1308;
+		vrLoc = 54118;
 	};
 	3523B17117197C3500AAFD5C /* maxmspsdk.xcconfig */ = {
 		uiCtxt = {
@@ -110,32 +86,29 @@
 			sepNavWindowFrame = "{{15, 0}, {770, 873}}";
 		};
 	};
-	3556B74D1B528AB600B8408F /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 3556B74E1B528AB600B8408F /* sigmund~ original.c */;
-		name = "sigmund~ original.c: 1024";
-		rLen = 8;
-		rLoc = 32652;
-		rType = 0;
-		vrLen = 1219;
-		vrLoc = 31823;
-	};
-	3556B74E1B528AB600B8408F /* sigmund~ original.c */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.c;
-		name = "sigmund~ original.c";
-		path = "/Users/vb/project-files/C-prog/MaxSDK-6.1.4/xothers/sigmund~/sigmund~ original.c";
-		sourceTree = "<absolute>";
-	};
-	3569A7A51B5816F400AEA2B0 /* PBXTextBookmark */ = {
+	3536B8831B6106BD007DE769 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 35D6DFD71B36E2F5008B59F7 /* d_fft_mayer.c */;
 		name = "d_fft_mayer.c: 61";
 		rLen = 0;
 		rLoc = 2704;
 		rType = 0;
-		vrLen = 1131;
+		vrLen = 1883;
 		vrLoc = 0;
+	};
+	3536B8841B6106BD007DE769 /* PBXBookmark */ = {
+		isa = PBXBookmark;
+		fRef = 35DE5CEA1B39218100941F5C /* sigmund~.c */;
+	};
+	3536B8851B6106BD007DE769 /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 35DE5CEA1B39218100941F5C /* sigmund~.c */;
+		name = "sigmund~.c: 1058";
+		rLen = 0;
+		rLoc = 34003;
+		rType = 0;
+		vrLen = 692;
+		vrLoc = 1284;
 	};
 	3588967417197817000564EB /* Source Control */ = {
 		isa = PBXSourceControlManager;
@@ -151,91 +124,16 @@
 		isa = PBXCodeSenseManager;
 		indexTemplatePath = "";
 	};
-	358CD6A71B5BFA9700926312 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 35DE5CEA1B39218100941F5C /* sigmund~.c */;
-		name = "sigmund~.c: 1058";
-		rLen = 0;
-		rLoc = 34003;
-		rType = 0;
-		vrLen = 1243;
-		vrLoc = 33452;
-	};
-	358CD6B31B5BFB8E00926312 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 35DE5CEA1B39218100941F5C /* sigmund~.c */;
-		name = "sigmund~.c: 1058";
-		rLen = 0;
-		rLoc = 34003;
-		rType = 0;
-		vrLen = 1243;
-		vrLoc = 33452;
-	};
-	35961C8A1B41CCA100A5F475 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 35D6E07D1B373B7E008B59F7 /* sigmund~.c */;
-		name = "sigmund~.c: 1628";
-		rLen = 1;
-		rLoc = 52394;
-		rType = 0;
-		vrLen = 1366;
-		vrLoc = 51836;
-	};
-	35961C8B1B41CCA100A5F475 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 35961C8C1B41CCA100A5F475 /* sigmund~NEW.c */;
-		name = "sigmund~.c: 10";
-		rLen = 1;
-		rLoc = 356;
-		rType = 0;
-		vrLen = 1256;
-		vrLoc = 0;
-	};
-	35961C8C1B41CCA100A5F475 /* sigmund~NEW.c */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.c;
-		path = "sigmund~NEW.c";
-		sourceTree = SOURCE_ROOT;
-		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {824, 33740}}";
-			sepNavSelRange = "{48515, 1}";
-			sepNavVisRange = "{47472, 1609}";
-		};
-	};
-	35961C8D1B41CCA100A5F475 /* PBXTextBookmark */ = {
-		isa = PBXTextBookmark;
-		fRef = 35D6E07A1B373B7E008B59F7 /* z_sampletype.h */;
-		name = "z_sampletype.h: 12";
-		rLen = 23;
-		rLoc = 284;
-		rType = 0;
-		vrLen = 1107;
-		vrLoc = 0;
-	};
 	35D6DFD71B36E2F5008B59F7 /* d_fft_mayer.c */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {1007, 8100}}";
 			sepNavSelRange = "{2704, 0}";
-			sepNavVisRange = "{0, 1131}";
+			sepNavVisRange = "{0, 1883}";
 		};
-	};
-	35D6E07A1B373B7E008B59F7 /* z_sampletype.h */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.h;
-		name = z_sampletype.h;
-		path = "/Users/vb/project-files/C-prog/MaxSDK-6.1.4/c74support/msp-includes/z_sampletype.h";
-		sourceTree = "<absolute>";
-	};
-	35D6E07D1B373B7E008B59F7 /* sigmund~.c */ = {
-		isa = PBXFileReference;
-		lastKnownFileType = sourcecode.c.c;
-		name = "sigmund~.c";
-		path = "/Users/vb/project-files/xxx-otherSources/libpd-libpd-2cb5dae/pure-data/extra/sigmund~/sigmund~.c";
-		sourceTree = "<absolute>";
 	};
 	35DE5CEA1B39218100941F5C /* sigmund~.c */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {830, 34680}}";
+			sepNavIntBoundsRect = "{{0, 0}, {830, 34840}}";
 			sepNavSelRange = "{34003, 0}";
 			sepNavVisRange = "{54118, 1308}";
 			sepNavWindowFrame = "{{15, 0}, {779, 875}}";

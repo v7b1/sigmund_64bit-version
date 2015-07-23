@@ -258,7 +258,7 @@
 						<dict>
 							<key>PBXSmartGroupTreeModuleColumnWidthsKey</key>
 							<array>
-								<real>185</real>
+								<real>132</real>
 							</array>
 							<key>PBXSmartGroupTreeModuleColumnsKey_v4</key>
 							<array>
@@ -275,12 +275,12 @@
 							<key>PBXSmartGroupTreeModuleOutlineStateSelectionKey</key>
 							<array>
 								<array>
-									<integer>5</integer>
+									<integer>1</integer>
 									<integer>0</integer>
 								</array>
 							</array>
 							<key>PBXSmartGroupTreeModuleOutlineStateVisibleRectKey</key>
-							<string>{{0, 0}, {185, 764}}</string>
+							<string>{{0, 0}, {132, 764}}</string>
 						</dict>
 						<key>PBXTopSmartGroupGIDs</key>
 						<array/>
@@ -290,19 +290,19 @@
 					<key>GeometryConfiguration</key>
 					<dict>
 						<key>Frame</key>
-						<string>{{0, 0}, {202, 782}}</string>
+						<string>{{0, 0}, {149, 782}}</string>
 						<key>GroupTreeTableConfiguration</key>
 						<array>
 							<string>MainColumn</string>
-							<real>185</real>
+							<real>132</real>
 						</array>
 						<key>RubberWindowFrame</key>
-						<string>316 55 1092 823 0 0 1440 878 </string>
+						<string>444 55 921 823 0 0 1440 878 </string>
 					</dict>
 					<key>Module</key>
 					<string>PBXSmartGroupTreeModule</string>
 					<key>Proportion</key>
-					<string>202pt</string>
+					<string>149pt</string>
 				</dict>
 				<dict>
 					<key>Dock</key>
@@ -325,16 +325,11 @@
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>358CD6B31B5BFB8E00926312</string>
+										<string>351E2E761B61090D00657EC6</string>
 										<key>history</key>
 										<array>
-											<string>35961C8A1B41CCA100A5F475</string>
-											<string>35961C8B1B41CCA100A5F475</string>
-											<string>35961C8D1B41CCA100A5F475</string>
-											<string>3556B74D1B528AB600B8408F</string>
-											<string>3569A7A51B5816F400AEA2B0</string>
-											<string>3510C6A01B5817F40042C6C9</string>
-											<string>358CD6A71B5BFA9700926312</string>
+											<string>3536B8831B6106BD007DE769</string>
+											<string>3536B8851B6106BD007DE769</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -348,9 +343,9 @@
 							<key>GeometryConfiguration</key>
 							<dict>
 								<key>Frame</key>
-								<string>{{0, 0}, {885, 777}}</string>
+								<string>{{0, 0}, {767, 777}}</string>
 								<key>RubberWindowFrame</key>
-								<string>316 55 1092 823 0 0 1440 878 </string>
+								<string>444 55 921 823 0 0 1440 878 </string>
 							</dict>
 							<key>Module</key>
 							<string>PBXNavigatorGroup</string>
@@ -373,9 +368,9 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {885, -27}}</string>
+										<string>{{10, 27}, {767, -27}}</string>
 										<key>RubberWindowFrame</key>
-										<string>316 55 1092 823 0 0 1440 878 </string>
+										<string>444 55 921 823 0 0 1440 878 </string>
 									</dict>
 									<key>Module</key>
 									<string>XCDetailModule</string>
@@ -438,7 +433,7 @@
 						</dict>
 					</array>
 					<key>Proportion</key>
-					<string>885pt</string>
+					<string>767pt</string>
 				</dict>
 			</array>
 			<key>Name</key>
@@ -457,11 +452,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>358CD6B41B5BFB8E00926312</string>
+				<string>351E2E771B61090D00657EC6</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>358CD6B51B5BFB8E00926312</string>
+				<string>351E2E781B61090D00657EC6</string>
 				<string>3588967E17197A39000564EB</string>
-				<string>358CD6B61B5BFB8E00926312</string>
+				<string>351E2E791B61090D00657EC6</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -631,10 +626,10 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>/Users/vb/project-files/C-prog/MaxSDK-6.1.4/myGitHub/sigmund-_64-bit/sigmund~/sigmund~.xcodeproj</string>
+		<string>/Users/vb/project-files/C-prog/MaxSDK-6.1.4/myGitHub/sigmund_64bit-version/sigmund~/sigmund~.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
-	<string>316 55 1092 823 0 0 1440 878 </string>
+	<string>444 55 921 823 0 0 1440 878 </string>
 	<key>WindowToolsV3</key>
 	<array>
 		<dict>
