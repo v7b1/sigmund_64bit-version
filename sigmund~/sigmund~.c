@@ -376,7 +376,7 @@ static void sigmund_getrawpeaks(int npts, t_sample *insamps,
 	}
 // TODO: wieso tweak zweimal?
 	sigmund_tweak(npts, rawreal, rawimag, peakcount, peakv, fperbin, loud);
-	//sigmund_tweak(npts, rawreal, rawimag, peakcount, peakv, fperbin, loud);
+	sigmund_tweak(npts, rawreal, rawimag, peakcount, peakv, fperbin, loud);
 
 	for (i = 0; i < peakcount; i++)
 	{
