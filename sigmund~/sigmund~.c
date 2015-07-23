@@ -1737,9 +1737,7 @@ int C74_EXPORT main(void)
 
 	class_register(CLASS_BOX, c);
 	sigmund_class = c;
-	
-	//post("sizeof t_sample: %d", sizeof(t_sample));
-	//post("sizeof t_sample: %d", sizeof(t_sample));
+
 
 	post("sigmund~ based on v0.07 -- 64bit version");
 	return (0);
