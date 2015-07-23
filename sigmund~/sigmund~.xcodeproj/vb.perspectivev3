@@ -197,48 +197,7 @@
 	<key>Notifications</key>
 	<array/>
 	<key>OpenEditors</key>
-	<array>
-		<dict>
-			<key>Content</key>
-			<dict>
-				<key>PBXProjectModuleGUID</key>
-				<string>3502B3FC1B5FFBB600204C82</string>
-				<key>PBXProjectModuleLabel</key>
-				<string>2up_svf~ copy.c</string>
-				<key>PBXSplitModuleInNavigatorKey</key>
-				<dict>
-					<key>Split0</key>
-					<dict>
-						<key>PBXProjectModuleGUID</key>
-						<string>3502B3FD1B5FFBB600204C82</string>
-						<key>PBXProjectModuleLabel</key>
-						<string>2up_svf~ copy.c</string>
-						<key>_historyCapacity</key>
-						<integer>40</integer>
-						<key>bookmark</key>
-						<string>3502B3FF1B5FFBB600204C82</string>
-						<key>history</key>
-						<array>
-							<string>3502B3FE1B5FFBB600204C82</string>
-						</array>
-					</dict>
-					<key>SplitCount</key>
-					<string>1</string>
-				</dict>
-				<key>StatusBarVisibility</key>
-				<true/>
-			</dict>
-			<key>Geometry</key>
-			<dict>
-				<key>Frame</key>
-				<string>{{0, 20}, {704, 814}}</string>
-				<key>PBXModuleWindowStatusBarHidden2</key>
-				<false/>
-				<key>RubberWindowFrame</key>
-				<string>15 20 704 855 0 0 1440 878 </string>
-			</dict>
-		</dict>
-	</array>
+	<array/>
 	<key>PerspectiveWidths</key>
 	<array>
 		<integer>-1</integer>
@@ -354,7 +313,7 @@
 								<key>PBXProjectModuleGUID</key>
 								<string>3588967E17197A39000564EB</string>
 								<key>PBXProjectModuleLabel</key>
-								<string>2up_svf~ copy.c</string>
+								<string>sigmund~.c</string>
 								<key>PBXSplitModuleInNavigatorKey</key>
 								<dict>
 									<key>Split0</key>
@@ -362,15 +321,14 @@
 										<key>PBXProjectModuleGUID</key>
 										<string>3588967F17197A39000564EB</string>
 										<key>PBXProjectModuleLabel</key>
-										<string>2up_svf~ copy.c</string>
+										<string>sigmund~.c</string>
 										<key>_historyCapacity</key>
 										<integer>40</integer>
 										<key>bookmark</key>
-										<string>3502B3F71B5FFBB600204C82</string>
+										<string>35E2BFBD1B614C9100BE7CCC</string>
 										<key>history</key>
 										<array>
-											<string>3502B3F41B5FFBB600204C82</string>
-											<string>3502B3F51B5FFBB600204C82</string>
+											<string>359F88D61B614C6F0027CFE7</string>
 										</array>
 									</dict>
 									<key>SplitCount</key>
@@ -410,6 +368,8 @@
 									<dict>
 										<key>Frame</key>
 										<string>{{10, 27}, {767, -27}}</string>
+										<key>RubberWindowFrame</key>
+										<string>444 55 921 823 0 0 1440 878 </string>
 									</dict>
 									<key>Module</key>
 									<string>XCDetailModule</string>
@@ -463,9 +423,7 @@
 									<key>GeometryConfiguration</key>
 									<dict>
 										<key>Frame</key>
-										<string>{{10, 27}, {767, -27}}</string>
-										<key>RubberWindowFrame</key>
-										<string>444 55 921 823 0 0 1440 878 </string>
+										<string>{{0, 0}, {568, 405}}</string>
 									</dict>
 									<key>Module</key>
 									<string>PBXBuildResultsModule</string>
@@ -493,11 +451,11 @@
 			</array>
 			<key>TableOfContents</key>
 			<array>
-				<string>3502B3F91B5FFBB600204C82</string>
+				<string>35E2BFBE1B614C9100BE7CCC</string>
 				<string>1CA23ED40692098700951B8B</string>
-				<string>3502B3FA1B5FFBB600204C82</string>
+				<string>35E2BFBF1B614C9100BE7CCC</string>
 				<string>3588967E17197A39000564EB</string>
-				<string>3502B3FB1B5FFBB600204C82</string>
+				<string>35E2BFC01B614C9100BE7CCC</string>
 				<string>1CA23EDF0692099D00951B8B</string>
 				<string>1CA23EE00692099D00951B8B</string>
 				<string>1CA23EE10692099D00951B8B</string>
@@ -667,7 +625,6 @@
 	<integer>5</integer>
 	<key>WindowOrderList</key>
 	<array>
-		<string>3502B3FC1B5FFBB600204C82</string>
 		<string>/Users/vb/project-files/C-prog/MaxSDK-6.1.4/myGitHub/sigmund_64bit-version/sigmund~/sigmund~.xcodeproj</string>
 	</array>
 	<key>WindowString</key>
