@@ -58,8 +58,12 @@
 /* the following is needed only to declare pd_fft() as exportable in MSW */
 //#include "m_pd.h"			// vb, we don't really need this
 
-//#define REAL t_sample	// vb, with this we have to include t_sample definition from m_pd.h (which might clash with max's t_sample definition...)
-#define REAL float			// vb, CHANGED to FLOAT, vb - try to resolve conflicts with t_sample definition in "z_dsp.h"
+#include "z_sampletype.h"
+
+#define REAL t_sample
+//#define REAL float
+
+
 #define GOOD_TRIG
 
 #ifdef GOOD_TRIG

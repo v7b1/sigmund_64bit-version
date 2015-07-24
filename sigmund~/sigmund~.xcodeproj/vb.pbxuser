@@ -71,9 +71,9 @@
 	351E2E761B61090D00657EC6 /* PBXTextBookmark */ = {
 		isa = PBXTextBookmark;
 		fRef = 35DE5CEA1B39218100941F5C /* sigmund~.c */;
-		name = "sigmund~.c: 1058";
+		name = "sigmund~.c: 379";
 		rLen = 0;
-		rLoc = 34003;
+		rLoc = 12066;
 		rType = 0;
 		vrLen = 1308;
 		vrLoc = 54118;
@@ -138,5 +138,25 @@
 			sepNavVisRange = "{54118, 1308}";
 			sepNavWindowFrame = "{{15, 0}, {779, 875}}";
 		};
+	};
+	35E2BFBD1B614C9100BE7CCC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 35DE5CEA1B39218100941F5C /* sigmund~.c */;
+		name = "sigmund~.c: 379";
+		rLen = 0;
+		rLoc = 12066;
+		rType = 0;
+		vrLen = 1042;
+		vrLoc = 0;
+	};
+	35E2BFC31B614D3100BE7CCC /* PBXTextBookmark */ = {
+		isa = PBXTextBookmark;
+		fRef = 35DE5CEA1B39218100941F5C /* sigmund~.c */;
+		name = "sigmund~.c: 379";
+		rLen = 0;
+		rLoc = 12066;
+		rType = 0;
+		vrLen = 1207;
+		vrLoc = 11369;
 	};
 }
