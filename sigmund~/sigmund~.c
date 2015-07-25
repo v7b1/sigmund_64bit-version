@@ -19,6 +19,7 @@ single-precision FFT, invoked as in the Mayer one: */
 /* trying to make a painless update to maxmsp 64 bit, june 2015, vb */
 
 #define MSP				// compile a 64 bit version for MaxMSP
+#define VDSP			// use apple's vector lib
 
 
 #ifdef PD
@@ -37,7 +38,18 @@ typedef float t_samplearg;
 #ifdef _MSC_VER /* this is only needed with Microsoft's compiler */
 __declspec(dllimport) extern
 #endif
+
+#ifdef VDSP
+#include <Accelerate/Accelerate.h>
+#endif
+
+
+
+#ifdef VDSP
+void vdsp_realfft(int npoints, double *buf, DSPDoubleSplitComplex A, FFTSetupD setup, int log2n);
+#else
 void mayer_realfft(int npoints, t_sample *buf);
+#endif
 
 /* this routine is passed a buffer of npoints values, and returns the
 N/2+1 real parts of the DFT (frequency zero through Nyquist), followed
@@ -251,140 +263,6 @@ static void sigmund_remask(int maxbin, int bestindex, t_sample powmask,
     } 
 }
 
-#define PEAKMASKFACTOR 1.
-#define PEAKTHRESHFACTOR 0.6
-
-
-#pragma mark GET RAW PEAKS -------------
-
-static void sigmund_getrawpeaks(int npts, t_sample *insamps,
-    int npeak, t_peak *peakv, int *nfound, t_sample *power, t_sample srate, int loud,
-    t_sample hifreq)
-{
-	t_sample oneovern = 1.0/ (t_sample)npts;
-	t_sample fperbin = 0.5 * srate * oneovern;
-	t_sample totalpower = 0;
-	int npts2 = 2*npts, i, bin;
-	int peakcount = 0;
-	t_sample *fp1, *fp2;
-	t_sample *rawreal, *rawimag, *maskbuf, *powbuf;
-	t_sample *bigbuf = alloca(sizeof (t_sample ) * (2*NEGBINS + 6*npts));
-	int maxbin = hifreq/fperbin;
-	if (maxbin > npts - NEGBINS)
-		maxbin = npts - NEGBINS;
-	/* if (loud) post("tweak %d", tweak); */
-	maskbuf = bigbuf + npts2;
-	powbuf = maskbuf + npts;
-	rawreal = powbuf + npts+NEGBINS;
-	rawimag = rawreal+npts+NEGBINS;
-	for (i = 0; i < npts; i++)
-		maskbuf[i] = 0;
-
-	for (i = 0; i < npts; i++)
-		bigbuf[i] = insamps[i];
-	for (i = npts; i < 2*npts; i++)
-		bigbuf[i] = 0;
-	mayer_realfft(npts2, bigbuf);
-	for (i = 0; i < npts; i++)
-		rawreal[i] = bigbuf[i];
-	for (i = 1; i < npts-1; i++)
-		rawimag[i] = bigbuf[npts2-i];
-	rawreal[-1] = rawreal[1];
-	rawreal[-2] = rawreal[2];
-	rawreal[-3] = rawreal[3];
-	rawreal[-4] = rawreal[4];
-	rawimag[0] = rawimag[npts-1] = 0;
-	rawimag[-1] = -rawimag[1];
-	rawimag[-2] = -rawimag[2];
-	rawimag[-3] = -rawimag[3];
-	rawimag[-4] = -rawimag[4];
-#if 1
-	for (i = 0, fp1 = rawreal, fp2 = rawimag; i < maxbin; i++, fp1++, fp2++)
-	{
-		t_sample x1 = fp1[1] - fp1[-1], x2 = fp2[1] - fp2[-1]; 
-		t_sample p = powbuf[i] = x1*x1+x2*x2;
-		if(i >= 2) totalpower += p;
-	}
-    //powbuf[npts-1] = 0;
-	powbuf[maxbin] = powbuf[maxbin+1] = 0;
-	*power = 0.5 * totalpower *oneovern * oneovern;
-#endif
-	for (peakcount = 0; peakcount < npeak; peakcount++)
-	{
-		t_sample pow1, maxpower = 0, windreal, windimag, windpower,
-			detune, pidetune, sinpidetune, cospidetune, ampcorrect, ampout,
-			ampoutreal, ampoutimag, freqout, powmask;
-		int bestindex = -1;
-
-		for (bin = 2, fp1 = rawreal+2, fp2 = rawimag+2;
-			bin < maxbin; bin++, fp1++, fp2++)
-		{
-			pow1 = powbuf[bin];
-			if (pow1 > maxpower && pow1 > maskbuf[bin])
-			{
-				t_sample thresh = PEAKTHRESHFACTOR * (powbuf[bin-2]+powbuf[bin+2]);
-				if (pow1 > thresh)
-					maxpower = pow1, bestindex = bin;
-			}
-			//totalpower += pow1;
-		}
-
-		if (totalpower <= 0 || maxpower < 1e-10*totalpower || bestindex < 0)
-			break;
-		fp1 = rawreal+bestindex;
-		fp2 = rawimag+bestindex;
-		//*power = 0.5 * totalpower *oneovern * oneovern;
-		powmask = maxpower * PEAKMASKFACTOR;
-		/* if (loud > 2)
-			post("maxpower %f, powmask %f, param1 %f",
-				maxpower, powmask, param1); */
-		sigmund_remask(maxbin, bestindex, powmask, maxpower, maskbuf);
-		
-		/* if (loud > 1)
-			post("best index %d, total power %f", bestindex, totalpower); */
-
-		windreal = fp1[1] - fp1[-1];
-		windimag = fp2[1] - fp2[-1];
-		windpower = windreal * windreal + windimag * windimag;
-		detune = ((fp1[1] * fp1[1] - fp1[-1]*fp1[-1]) 
-			+ (fp2[1] * fp2[1] - fp2[-1]*fp2[-1])) / (2 * windpower);
-
-		if (detune > 0.5)
-			detune = 0.5;
-		else if (detune < -0.5)
-			detune = -0.5;
-		/* if (loud > 1)
-			post("windpower %f, index %d, detune %f",
-				windpower, bestindex, detune); */
-		pidetune = PI * detune;
-		sinpidetune = sin(pidetune);
-		cospidetune = cos(pidetune);
-		ampcorrect = 1.0 / window_mag(pidetune, cospidetune);
-
-		ampout = ampcorrect *sqrt(windpower);
-		ampoutreal = ampcorrect *
-			(windreal * cospidetune - windimag * sinpidetune);
-		ampoutimag = ampcorrect *
-			(windreal * sinpidetune + windimag * cospidetune);
-
-			/* the frequency is the sum of the bin frequency and detuning */
-
-		peakv[peakcount].p_freq = (freqout = (bestindex + 2*detune)) * fperbin;
-		peakv[peakcount].p_amp = oneovern * ampout;
-		peakv[peakcount].p_ampreal = oneovern * ampoutreal;
-		peakv[peakcount].p_ampimag = oneovern * ampoutimag;
-	}
-// TODO: wieso tweak zweimal?
-	sigmund_tweak(npts, rawreal, rawimag, peakcount, peakv, fperbin, loud);
-	sigmund_tweak(npts, rawreal, rawimag, peakcount, peakv, fperbin, loud);
-
-	for (i = 0; i < peakcount; i++)
-	{
-		peakv[i].p_pit = sigmund_ftom(peakv[i].p_freq);
-		peakv[i].p_db = sigmund_powtodb(peakv[i].p_amp);
-	}
-	*nfound = peakcount;
-}
 
 /*************** Routines for finding fundamental pitch *************/
 
@@ -843,41 +721,48 @@ typedef struct _varout
 typedef struct _sigmund
 {
 #ifdef PD
-    t_object x_obj;
-    t_clock *x_clock;
-    float x_f;          /* for main signal inlet */
+	t_object x_obj;
+	t_clock *x_clock;
+	float x_f;          /* for main signal inlet */
 #endif /* PD */
 #ifdef MSP
-    t_pxobject x_obj;
-    void *obex;
-    void *x_clock;
-    t_sample *x_inbuf2; /* extra input buffer to eat clock/DSP jitter */	// vb, CHANGED from T_SAMPLE to FLOAT
+	t_pxobject x_obj;
+	void *obex;
+	void *x_clock;
+	t_sample *x_inbuf2; /* extra input buffer to eat clock/DSP jitter */	// vb, CHANGED from T_SAMPLE to FLOAT
 #endif /* MSP */
-    t_varout *x_varoutv;
-    int x_nvarout;
-    t_sample x_sr;         /* sample rate */
-    int x_mode;         /* MODE_STREAM, etc. */
-    int x_npts;         /* number of points in analysis window */
-    int x_npeak;        /* number of peaks to find */
-    int x_loud;         /* debug level */
-    t_sample *x_inbuf;  /* input buffer */					// vb, CHANGED from T_SAMPLE to FLOAT
-    int x_infill;       /* number of points filled */
-    int x_countdown;    /* countdown to start filling buffer */
-    int x_hop;          /* samples between analyses */ 
-    t_sample x_maxfreq;    /* highest-frequency peak to report */ 
-    t_sample x_vibrato;    /* vibrato depth in half tones */ 
-    t_sample x_stabletime; /* period of stability needed for note */ 
-    t_sample x_growth;     /* growth to set off a new note */ 
-    t_sample x_minpower;   /* minimum power, in DB, for a note */ 
-    t_sample x_param1;     /* three parameters for temporary use */
-    t_sample x_param2;
-    t_sample x_param3;
-    t_notefinder x_notefinder;  /* note parsing state */
-    t_peak *x_trackv;           /* peak tracking state */
-    int x_ntrack;               /* number of peaks tracked */
-    unsigned int x_dopitch:1;   /* which things to calculate */
-    unsigned int x_donote:1;
-    unsigned int x_dotracks:1;
+	t_varout *x_varoutv;
+	int x_nvarout;
+	t_sample x_sr;         /* sample rate */
+	int x_mode;         /* MODE_STREAM, etc. */
+	int x_npts;         /* number of points in analysis window */
+	int x_npeak;        /* number of peaks to find */
+	int x_loud;         /* debug level */
+	t_sample *x_inbuf;  /* input buffer */					// vb, CHANGED from T_SAMPLE to FLOAT
+	int x_infill;       /* number of points filled */
+	int x_countdown;    /* countdown to start filling buffer */
+	int x_hop;          /* samples between analyses */ 
+	t_sample x_maxfreq;    /* highest-frequency peak to report */ 
+	t_sample x_vibrato;    /* vibrato depth in half tones */ 
+	t_sample x_stabletime; /* period of stability needed for note */ 
+	t_sample x_growth;     /* growth to set off a new note */ 
+	t_sample x_minpower;   /* minimum power, in DB, for a note */ 
+	t_sample x_param1;     /* three parameters for temporary use */
+	t_sample x_param2;
+	t_sample x_param3;
+	t_notefinder x_notefinder;  /* note parsing state */
+	t_peak *x_trackv;           /* peak tracking state */
+	int x_ntrack;               /* number of peaks tracked */
+	unsigned int x_dopitch:1;   /* which things to calculate */
+	unsigned int x_donote:1;
+	unsigned int x_dotracks:1;
+	
+#ifdef VDSP
+	DSPDoubleSplitComplex A;
+	FFTSetupD	setupReal;
+	int			log2n;
+#endif
+	
 } t_sigmund;
 
 static void sigmund_preinit(t_sigmund *x)
@@ -909,67 +794,79 @@ static void sigmund_preinit(t_sigmund *x)
 
 static void sigmund_npts(t_sigmund *x, t_samplearg f)
 {
-    int nwas = x->x_npts, npts = f;
-        /* check parameter ranges */
-    if (npts < NPOINTS_MIN)
-        post("sigmund~: minimum points %d", NPOINTS_MIN),
-            npts = NPOINTS_MIN;
-    if (npts != (1 << sigmund_ilog2(npts)))
-        post("sigmund~: adjusting analysis size to %d points",
-            (npts = (1 << sigmund_ilog2(npts))));
-    if (npts != nwas)
-        x->x_countdown = x->x_infill  = 0;
-    if (x->x_mode == MODE_STREAM)
-    {
-        if (x->x_inbuf)
-        {
-            x->x_inbuf = (t_sample *)t_resizebytes(x->x_inbuf,			
-                sizeof(*x->x_inbuf) * nwas, sizeof(*x->x_inbuf) * npts);		// vb, CHANGED from T_SAMPLE to FLOAT 
+	int nwas = x->x_npts, npts = f;
+		/* check parameter ranges */
+	if (npts < NPOINTS_MIN)
+		post("sigmund~: minimum points %d", NPOINTS_MIN),
+			npts = NPOINTS_MIN;
+	if (npts != (1 << sigmund_ilog2(npts)))
+		post("sigmund~: adjusting analysis size to %d points",
+			(npts = (1 << sigmund_ilog2(npts))));
+	if (npts != nwas)
+		x->x_countdown = x->x_infill  = 0;
+	if (x->x_mode == MODE_STREAM)
+	{
+		if (x->x_inbuf)
+		{
+			x->x_inbuf = (t_sample *)t_resizebytes(x->x_inbuf,			
+				sizeof(*x->x_inbuf) * nwas, sizeof(*x->x_inbuf) * npts);		// vb, CHANGED from T_SAMPLE to FLOAT 
 #ifdef MSP
-            x->x_inbuf2 = (t_sample *)t_resizebytes(x->x_inbuf2,
-                sizeof(*x->x_inbuf2) * nwas, sizeof(*x->x_inbuf2) * npts);	// vb, CHANGED from T_SAMPLE to FLOAT
+			x->x_inbuf2 = (t_sample *)t_resizebytes(x->x_inbuf2,
+				sizeof(*x->x_inbuf2) * nwas, sizeof(*x->x_inbuf2) * npts);	// vb, CHANGED from T_SAMPLE to FLOAT
 #endif
-        }
-        else
-        {
-            x->x_inbuf = (t_sample *)getbytes(sizeof(*x->x_inbuf) * npts);		// vb, CHANGED from T_SAMPLE to FLOAT
-            memset((char *)(x->x_inbuf), 0, sizeof(*x->x_inbuf) * npts);
+		}
+		else
+		{
+			x->x_inbuf = (t_sample *)getbytes(sizeof(*x->x_inbuf) * npts);		// vb, CHANGED from T_SAMPLE to FLOAT
+			memset((char *)(x->x_inbuf), 0, sizeof(*x->x_inbuf) * npts);
 #ifdef MSP
-            x->x_inbuf2 = (t_sample *)getbytes(sizeof(*x->x_inbuf2) * npts);	// vb, CHANGED from T_SAMPLE to FLOAT
-            memset((char *)(x->x_inbuf2), 0, sizeof(*x->x_inbuf2) * npts);
+			x->x_inbuf2 = (t_sample *)getbytes(sizeof(*x->x_inbuf2) * npts);	// vb, CHANGED from T_SAMPLE to FLOAT
+			memset((char *)(x->x_inbuf2), 0, sizeof(*x->x_inbuf2) * npts);
 #endif
-        }
-    }
-    else x->x_inbuf = 0;
-    x->x_npts = npts;
+		}
+	}
+#ifdef VDSP
+	if(!x->A.realp) {
+		x->A.realp = (double*)sysmem_newptrclear( npts*sizeof(double));		// fftsize double the npts size!
+		x->A.imagp = (double*)sysmem_newptrclear( npts*sizeof(double));		// rest must be zero padded
+		//x->wind = (double*)sysmem_newptr(2*npts*sizeof(double));		// fftsize double the npts size
+		x->log2n = sigmund_ilog2(2*npts);
+		post("log2n = %d", x->log2n);
+		x->setupReal = vDSP_create_fftsetupD(x->log2n, FFT_RADIX2);
+		//vDSP_hann_windowD(x->wind, 2*npts, 0);
+	}
+#endif
+	//TODO: realloc, if size of npts changes!
+	else x->x_inbuf = 0;
+	x->x_npts = npts;
 }
 
 static void sigmund_hop(t_sigmund *x, t_samplearg f)
 {
-    x->x_hop = f;
-        /* check parameter ranges */
-    if (x->x_hop != (1 << sigmund_ilog2(x->x_hop)))
-        post("sigmund~: adjusting analysis size to %d points",
-            (x->x_hop = (1 << sigmund_ilog2(x->x_hop))));
+	x->x_hop = f;
+		/* check parameter ranges */
+	if (x->x_hop != (1 << sigmund_ilog2(x->x_hop)))
+		post("sigmund~: adjusting analysis size to %d points",
+			(x->x_hop = (1 << sigmund_ilog2(x->x_hop))));
 }
 
 static void sigmund_npeak(t_sigmund *x, t_samplearg f)
 {
-    if (f < 1)
-        f = 1;
-    x->x_npeak = f;
+	if (f < 1)
+		f = 1;
+	x->x_npeak = f;
 }
 
 static void sigmund_maxfreq(t_sigmund *x, t_samplearg f)
 {
-    x->x_maxfreq = f;
+	x->x_maxfreq = f;
 }
 
 static void sigmund_vibrato(t_sigmund *x, t_samplearg f)
 {
-    if (f < 0)
-        f = 0;
-    x->x_vibrato = f;
+	if (f < 0)
+		f = 0;
+	x->x_vibrato = f;
 }
 
 static void sigmund_stabletime(t_sigmund *x, t_samplearg f)
@@ -993,6 +890,157 @@ static void sigmund_minpower(t_sigmund *x, t_samplearg f)
     x->x_minpower = f;
 }
 
+
+#define PEAKMASKFACTOR 1.
+#define PEAKTHRESHFACTOR 0.6
+
+
+#pragma mark GET RAW PEAKS -------------
+
+static void sigmund_getrawpeaks(t_sigmund *x, int npts, t_sample *insamps,
+								int npeak, t_peak *peakv, int *nfound, t_sample *power, t_sample srate, int loud,
+								t_sample hifreq)
+{
+	t_sample oneovern = 1.0/ (t_sample)npts;
+	t_sample fperbin = 0.5 * srate * oneovern;
+	t_sample totalpower = 0;
+	int npts2 = 2*npts, i, bin;
+	int peakcount = 0;
+	t_sample *fp1, *fp2;
+	t_sample *rawreal, *rawimag, *maskbuf, *powbuf;
+	t_sample *bigbuf = alloca(sizeof (t_sample ) * (2*NEGBINS + 6*npts));
+	int maxbin = hifreq/fperbin;
+	if (maxbin > npts - NEGBINS)
+		maxbin = npts - NEGBINS;
+	/* if (loud) post("tweak %d", tweak); */
+	maskbuf = bigbuf + npts2;
+	powbuf = maskbuf + npts;
+	rawreal = powbuf + npts+NEGBINS;
+	rawimag = rawreal+npts+NEGBINS;
+	for (i = 0; i < npts; i++)
+		maskbuf[i] = 0;
+	
+	for (i = 0; i < npts; i++)
+		bigbuf[i] = insamps[i];
+	for (i = npts; i < 2*npts; i++)
+		bigbuf[i] = 0;
+	
+#ifdef VDSP
+	vdsp_realfft(npts2, bigbuf, x->A, x->setupReal, x->log2n);
+	
+	for (i = 0; i < npts; i++)
+		rawreal[i] = 0.5*x->A.realp[i];			// mayer uses different scaling
+	for (i = 1; i < npts-1; i++)
+		rawimag[i] = -0.5*x->A.imagp[i];		// and strangely mayer's imag part has inverted signs
+	
+	//for(i=0; i<20; i++) 
+	//post("vdsp real[%d]: %f -- imag[%d]: %f", i, rawreal[i], i, rawimag[i]);
+#else
+	mayer_realfft(npts2, bigbuf);
+	for (i = 0; i < npts; i++)
+		rawreal[i] = bigbuf[i];
+	for (i = 1; i < npts-1; i++)
+		rawimag[i] = bigbuf[npts2-i];
+#endif
+	
+	rawreal[-1] = rawreal[1];
+	rawreal[-2] = rawreal[2];
+	rawreal[-3] = rawreal[3];
+	rawreal[-4] = rawreal[4];
+	rawimag[0] = rawimag[npts-1] = 0;
+	rawimag[-1] = -rawimag[1];
+	rawimag[-2] = -rawimag[2];
+	rawimag[-3] = -rawimag[3];
+	rawimag[-4] = -rawimag[4];
+#if 1
+	for (i = 0, fp1 = rawreal, fp2 = rawimag; i < maxbin; i++, fp1++, fp2++)
+	 {
+		t_sample x1 = fp1[1] - fp1[-1], x2 = fp2[1] - fp2[-1]; 
+		t_sample p = powbuf[i] = x1*x1+x2*x2;
+		if(i >= 2) totalpower += p;
+	 }
+    //powbuf[npts-1] = 0;
+	powbuf[maxbin] = powbuf[maxbin+1] = 0;
+	*power = 0.5 * totalpower *oneovern * oneovern;
+#endif
+	for (peakcount = 0; peakcount < npeak; peakcount++)
+	 {
+		t_sample pow1, maxpower = 0, windreal, windimag, windpower,
+		detune, pidetune, sinpidetune, cospidetune, ampcorrect, ampout,
+		ampoutreal, ampoutimag, freqout, powmask;
+		int bestindex = -1;
+		
+		for (bin = 2, fp1 = rawreal+2, fp2 = rawimag+2;
+			 bin < maxbin; bin++, fp1++, fp2++)
+		 {
+			pow1 = powbuf[bin];
+			if (pow1 > maxpower && pow1 > maskbuf[bin])
+			 {
+				t_sample thresh = PEAKTHRESHFACTOR * (powbuf[bin-2]+powbuf[bin+2]);
+				if (pow1 > thresh)
+					maxpower = pow1, bestindex = bin;
+			 }
+			//totalpower += pow1;
+		 }
+		
+		if (totalpower <= 0 || maxpower < 1e-10*totalpower || bestindex < 0)
+			break;
+		fp1 = rawreal+bestindex;
+		fp2 = rawimag+bestindex;
+		//*power = 0.5 * totalpower *oneovern * oneovern;
+		powmask = maxpower * PEAKMASKFACTOR;
+		/* if (loud > 2)
+		 post("maxpower %f, powmask %f, param1 %f",
+		 maxpower, powmask, param1); */
+		sigmund_remask(maxbin, bestindex, powmask, maxpower, maskbuf);
+		
+		/* if (loud > 1)
+		 post("best index %d, total power %f", bestindex, totalpower); */
+		
+		windreal = fp1[1] - fp1[-1];
+		windimag = fp2[1] - fp2[-1];
+		windpower = windreal * windreal + windimag * windimag;
+		detune = ((fp1[1] * fp1[1] - fp1[-1]*fp1[-1]) 
+				  + (fp2[1] * fp2[1] - fp2[-1]*fp2[-1])) / (2 * windpower);
+		
+		if (detune > 0.5)
+			detune = 0.5;
+		else if (detune < -0.5)
+			detune = -0.5;
+		/* if (loud > 1)
+		 post("windpower %f, index %d, detune %f",
+		 windpower, bestindex, detune); */
+		pidetune = PI * detune;
+		sinpidetune = sin(pidetune);
+		cospidetune = cos(pidetune);
+		ampcorrect = 1.0 / window_mag(pidetune, cospidetune);
+		
+		ampout = ampcorrect *sqrt(windpower);
+		ampoutreal = ampcorrect *
+		(windreal * cospidetune - windimag * sinpidetune);
+		ampoutimag = ampcorrect *
+		(windreal * sinpidetune + windimag * cospidetune);
+		
+		/* the frequency is the sum of the bin frequency and detuning */
+		
+		peakv[peakcount].p_freq = (freqout = (bestindex + 2*detune)) * fperbin;
+		peakv[peakcount].p_amp = oneovern * ampout;
+		peakv[peakcount].p_ampreal = oneovern * ampoutreal;
+		peakv[peakcount].p_ampimag = oneovern * ampoutimag;
+	 }
+	// TODO: wieso tweak zweimal?
+	sigmund_tweak(npts, rawreal, rawimag, peakcount, peakv, fperbin, loud);
+	sigmund_tweak(npts, rawreal, rawimag, peakcount, peakv, fperbin, loud);
+	
+	for (i = 0; i < peakcount; i++)
+	 {
+		peakv[i].p_pit = sigmund_ftom(peakv[i].p_freq);
+		peakv[i].p_db = sigmund_powtodb(peakv[i].p_amp);
+	 }
+	*nfound = peakcount;
+}
+
+
 #pragma mark DO THE WORK + OUTPUT -------
 static void sigmund_doit(t_sigmund *x, int npts, t_sample *arraypoints,
     int loud, float srate)
@@ -1000,7 +1048,7 @@ static void sigmund_doit(t_sigmund *x, int npts, t_sample *arraypoints,
     t_peak *peakv = (t_peak *)alloca(sizeof(t_peak) * x->x_npeak);
     int nfound, i, cnt;
     t_sample freq = 0, power, note = 0;
-    sigmund_getrawpeaks(npts, arraypoints, x->x_npeak, peakv,
+    sigmund_getrawpeaks(x, npts, arraypoints, x->x_npeak, peakv,
 						&nfound, &power, srate, loud, x->x_maxfreq);
     if (x->x_dopitch)
         sigmund_getpitch(nfound, peakv, &freq, npts, srate, 
@@ -1121,6 +1169,13 @@ static void sigmund_free(t_sigmund *x)
     if (x->x_trackv)
         freebytes(x->x_trackv, x->x_ntrack * sizeof(*x->x_trackv));
     clock_free(x->x_clock);
+	
+#ifdef VDSP
+	vDSP_destroy_fftsetupD ( x->setupReal );
+	
+	sysmem_freeptr(x->A.realp);
+	sysmem_freeptr(x->A.imagp);
+#endif
 }
 
 #endif /* PD or MSP */
@@ -1743,6 +1798,17 @@ int C74_EXPORT main(void)
 	return (0);
 }
 
+
+#ifdef VDSP
+void vdsp_realfft(int npoints, double *buf, DSPDoubleSplitComplex A, FFTSetupD setup, int log2n) 
+{
+	int n2 = npoints>>1;
+	//vDSP_vmulD(buf, 1, wind, 1, buf, 1, n2);
+	vDSP_ctozD( (DSPDoubleComplex *) buf, 2, &A, 1, n2);
+	vDSP_fft_zripD( setup, &A, 1, log2n, FFT_FORWARD);	// do forward transform
+	//vDSP_ztocD( &A, 1, (DSPDoubleComplex *)buf, 2, n2);
+}
+#endif
 
 #endif /* MSP */
 
