@@ -851,7 +851,7 @@ typedef struct _sigmund
     t_pxobject x_obj;
     void *obex;
     void *x_clock;
-    t_sample *x_inbuf2; /* extra input buffer to eat clock/DSP jitter */	// vb, CHANGED from T_SAMPLE to FLOAT
+    t_sample *x_inbuf2; /* extra input buffer to eat clock/DSP jitter */
 #endif /* MSP */
     t_varout *x_varoutv;
     int x_nvarout;
@@ -860,7 +860,7 @@ typedef struct _sigmund
     int x_npts;         /* number of points in analysis window */
     int x_npeak;        /* number of peaks to find */
     int x_loud;         /* debug level */
-    t_sample *x_inbuf;  /* input buffer */					// vb, CHANGED from T_SAMPLE to FLOAT
+    t_sample *x_inbuf;  /* input buffer */					
     int x_infill;       /* number of points filled */
     int x_countdown;    /* countdown to start filling buffer */
     int x_hop;          /* samples between analyses */ 
@@ -924,18 +924,18 @@ static void sigmund_npts(t_sigmund *x, t_samplearg f)
         if (x->x_inbuf)
         {
             x->x_inbuf = (t_sample *)t_resizebytes(x->x_inbuf,			
-                sizeof(*x->x_inbuf) * nwas, sizeof(*x->x_inbuf) * npts);		// vb, CHANGED from T_SAMPLE to FLOAT 
+                sizeof(*x->x_inbuf) * nwas, sizeof(*x->x_inbuf) * npts);		
 #ifdef MSP
             x->x_inbuf2 = (t_sample *)t_resizebytes(x->x_inbuf2,
-                sizeof(*x->x_inbuf2) * nwas, sizeof(*x->x_inbuf2) * npts);	// vb, CHANGED from T_SAMPLE to FLOAT
+                sizeof(*x->x_inbuf2) * nwas, sizeof(*x->x_inbuf2) * npts);	
 #endif
         }
         else
         {
-            x->x_inbuf = (t_sample *)getbytes(sizeof(*x->x_inbuf) * npts);		// vb, CHANGED from T_SAMPLE to FLOAT
+            x->x_inbuf = (t_sample *)getbytes(sizeof(*x->x_inbuf) * npts);		
             memset((char *)(x->x_inbuf), 0, sizeof(*x->x_inbuf) * npts);
 #ifdef MSP
-            x->x_inbuf2 = (t_sample *)getbytes(sizeof(*x->x_inbuf2) * npts);	// vb, CHANGED from T_SAMPLE to FLOAT
+            x->x_inbuf2 = (t_sample *)getbytes(sizeof(*x->x_inbuf2) * npts);	
             memset((char *)(x->x_inbuf2), 0, sizeof(*x->x_inbuf2) * npts);
 #endif
         }
@@ -1484,7 +1484,11 @@ void sigmund_perform64(t_sigmund *x, t_object *dsp64, double **ins, long numins,
 	double *in = ins[0];
 	int n = sampleframes, j;
 	int infill = x->x_infill;
-	t_sample *fp = x->x_inbuf2 + infill;				
+	t_sample *fp = x->x_inbuf2 + infill;	
+	
+	if (x->x_obj.z_disabled) /* return if in muted MSP subpatch -Rd */
+		return;
+	
 	if (infill < 0 || infill >= x->x_npts)
 		infill = 0;
 	/* for some reason this sometimes happens: */
@@ -1497,7 +1501,7 @@ void sigmund_perform64(t_sigmund *x, t_object *dsp64, double **ins, long numins,
 	for (j = 0; j < n; j++)
 	 {
 		//*fp++ = *in++;
-		*fp++ = (t_sample)in[j];					// vb, CONVERT from DOUBLE to FLOAT
+		*fp++ = in[j];					
 		if (++infill == x->x_npts)
 			infill = 0, fp = x->x_inbuf2;
 	 }
