@@ -5,7 +5,7 @@
 			"major" : 6,
 			"minor" : 1,
 			"revision" : 9,
-			"architecture" : "x64"
+			"architecture" : "x86"
 		}
 ,
 		"rect" : [ 618.0, 44.0, 691.0, 546.0 ],
@@ -189,7 +189,7 @@
 							"major" : 6,
 							"minor" : 1,
 							"revision" : 9,
-							"architecture" : "x64"
+							"architecture" : "x86"
 						}
 ,
 						"rect" : [ 345.0, 63.0, 661.0, 509.0 ],
@@ -352,7 +352,7 @@
 											"major" : 6,
 											"minor" : 1,
 											"revision" : 9,
-											"architecture" : "x64"
+											"architecture" : "x86"
 										}
 ,
 										"rect" : [ 307.0, 164.0, 579.0, 501.0 ],
@@ -388,7 +388,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -967,7 +967,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -1546,7 +1546,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -2125,7 +2125,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -2704,7 +2704,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -3283,7 +3283,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -3862,7 +3862,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -4441,7 +4441,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -5020,7 +5020,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -5599,7 +5599,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -6192,7 +6192,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -6771,7 +6771,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -7350,7 +7350,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -7929,7 +7929,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -8508,7 +8508,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -9099,7 +9099,7 @@
 															"major" : 6,
 															"minor" : 1,
 															"revision" : 9,
-															"architecture" : "x64"
+															"architecture" : "x86"
 														}
 ,
 														"rect" : [ 49.0, 59.0, 600.0, 426.0 ],
@@ -10296,7 +10296,7 @@
 							"major" : 6,
 							"minor" : 1,
 							"revision" : 9,
-							"architecture" : "x64"
+							"architecture" : "x86"
 						}
 ,
 						"rect" : [ 54.0, 59.0, 592.0, 196.0 ],
@@ -10368,7 +10368,7 @@
 							"major" : 6,
 							"minor" : 1,
 							"revision" : 9,
-							"architecture" : "x64"
+							"architecture" : "x86"
 						}
 ,
 						"rect" : [ 593.0, 69.0, 440.0, 635.0 ],
@@ -10647,7 +10647,7 @@
 							"major" : 6,
 							"minor" : 1,
 							"revision" : 9,
-							"architecture" : "x64"
+							"architecture" : "x86"
 						}
 ,
 						"rect" : [ 428.0, 53.0, 584.0, 606.0 ],
@@ -11656,6 +11656,20 @@
 				}
 
 			}
+, 			{
+				"box" : 				{
+					"attr" : "npts",
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"id" : "obj-3",
+					"maxclass" : "attrui",
+					"numinlets" : 1,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 134.318176, 290.927277, 150.0, 20.0 ]
+				}
+
+			}
  ],
 		"lines" : [ 			{
 				"patchline" : 				{
@@ -11718,6 +11732,15 @@
 					"disabled" : 0,
 					"hidden" : 0,
 					"source" : [ "obj-26", 0 ]
+				}
+
+			}
+, 			{
+				"patchline" : 				{
+					"destination" : [ "obj-24", 0 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-3", 0 ]
 				}
 
 			}
