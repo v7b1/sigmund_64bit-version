@@ -30,7 +30,7 @@ single-precision FFT, invoked as in the Mayer one: */
 #include "ext_support.h"
 #include "ext_proto.h"
 #include "ext_obex.h"
-typedef float t_samplearg;
+typedef double t_samplearg;
 #define t_resizebytes(a, b, c) t_resizebytes((char *)(a), (b), (c))
 #endif
 
@@ -1696,7 +1696,7 @@ int C74_EXPORT main(void)
 {       
 	t_class *c;
 	long attrflags = 0;
-	t_symbol *sym_long = gensym("long"), *sym_float32 = gensym("float32");
+	t_symbol *sym_long = gensym("long"), *sym_float64 = gensym("float64");
 
 	c = class_new("sigmund~", (method)sigmund_new,
 		(method)sigmund_free, sizeof(t_sigmund), (method)0L, A_GIMME, 0);
@@ -1709,22 +1709,22 @@ int C74_EXPORT main(void)
 	class_addattr(c ,attr_offset_new("hop", sym_long, attrflags,
 		(method)0L, (method)sigmund_hop_set,
 			calcoffset(t_sigmund, x_hop)));
-	class_addattr(c ,attr_offset_new("maxfreq", sym_float32, attrflags,
+	class_addattr(c ,attr_offset_new("maxfreq", sym_float64, attrflags,
 		(method)0L, (method)sigmund_maxfreq_set,
 			calcoffset(t_sigmund, x_maxfreq)));
 	class_addattr(c ,attr_offset_new("npeak", sym_long, attrflags,
 		(method)0L, (method)sigmund_npeak_set,
 			calcoffset(t_sigmund, x_npeak)));
-	class_addattr(c ,attr_offset_new("vibrato", sym_float32, attrflags,
+	class_addattr(c ,attr_offset_new("vibrato", sym_float64, attrflags,
 		(method)0L, (method)sigmund_vibrato_set,
 			calcoffset(t_sigmund, x_vibrato)));
-	class_addattr(c ,attr_offset_new("stabletime", sym_float32, attrflags,
+	class_addattr(c ,attr_offset_new("stabletime", sym_float64, attrflags,
 		(method)0L, (method)sigmund_stabletime_set,
 			calcoffset(t_sigmund, x_stabletime)));
-	class_addattr(c ,attr_offset_new("growth", sym_float32, attrflags,
+	class_addattr(c ,attr_offset_new("growth", sym_float64, attrflags,
 		(method)0L, (method)sigmund_growth_set,
 			calcoffset(t_sigmund, x_growth)));
-	class_addattr(c ,attr_offset_new("minpower", sym_float32, attrflags,
+	class_addattr(c ,attr_offset_new("minpower", sym_float64, attrflags,
 		(method)0L, (method)sigmund_minpower_set,
 			calcoffset(t_sigmund, x_minpower)));
 
