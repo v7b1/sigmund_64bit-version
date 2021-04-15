@@ -938,10 +938,10 @@ static void sigmund_npts(t_sigmund *x, t_samplearg f)
         {
             x->x_inbuf = (t_sample *)sysmem_newptr(sizeof(*x->x_inbuf) * npts);
             memset((char *)(x->x_inbuf), 0, sizeof(*x->x_inbuf) * npts);
-#ifdef MSP
+
             x->x_inbuf2 = (t_sample *)sysmem_newptr(sizeof(*x->x_inbuf2) * npts);
             memset((char *)(x->x_inbuf2), 0, sizeof(*x->x_inbuf2) * npts);
-#endif
+
         }
     }
     else x->x_inbuf = 0;
@@ -1151,7 +1151,35 @@ void sigmund_perform64(t_sigmund *x, t_object *dsp64, double **ins, long numins,
 {
 	double *in = ins[0];
 	int n = sampleframes, j;
-
+    int infill = x->x_infill;
+    t_sample *fp = x->x_inbuf2 + infill;
+    
+    if (x->x_obj.z_disabled) /* return if in muted MSP subpatch -Rd */
+        return;
+    
+    if (infill < 0 || infill >= x->x_npts)
+        infill = 0;
+    /* for some reason this sometimes happens: */
+    if (!x->x_inbuf2) {
+        object_error((t_object*)x, "hey, no infub2! -- error!");
+        return;
+    }
+    
+    
+    for (j = 0; j < n; j++)
+    {
+        //*fp++ = *in++;
+        *fp++ = in[j];
+        if (++infill == x->x_npts)
+            infill = 0, fp = x->x_inbuf2;
+    }
+    x->x_infill = infill;
+    if (x->x_countdown <= 0)
+    {
+        x->x_countdown = x->x_hop;
+        clock_fdelay(x->x_clock, 0.0);
+    }
+    x->x_countdown -= n;
 	return;
 }
 
@@ -1194,7 +1222,7 @@ static void *sigmund_new(t_symbol *s, long ac, t_atom *av)
     int i, j;
     if (!(x = (t_sigmund *)object_alloc(sigmund_class)))
         return (0);
-//    sigmund_preinit(x);
+    sigmund_preinit(x);
     attr_args_process(x, ac, av);
     dsp_setup((t_pxobject *)x, 1);
 //    object_obex_store(x, gensym("dumpout"), outlet_new(x, NULL));
