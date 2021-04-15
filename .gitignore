@@ -1,7 +1,15 @@
-# xcode noise
-*.pbxuser
-*.perspective 
-*.perspectivev3
+sysbuild
+*.sdf
+*.suo
+*.sln
+*.opensdf
+log.txt
+externals
+support
+build
+*.o
+*.dylib
+tmp
+xxx
 
-*.mxo
-*.zip
+package-info.json

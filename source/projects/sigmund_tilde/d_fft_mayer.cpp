@@ -58,10 +58,10 @@
 /* the following is needed only to declare pd_fft() as exportable in MSW */
 //#include "m_pd.h"			// vb, we don't really need this
 
-#include "z_sampletype.h"
+//#include "z_sampletype.h"
 
-#define REAL t_sample
-//#define REAL float
+//#define REAL t_sample
+#define REAL double
 
 
 #define GOOD_TRIG
