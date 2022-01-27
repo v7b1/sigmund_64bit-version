@@ -1,6 +1,14 @@
-cmake_minimum_required(VERSION 3.0)
+cmake_minimum_required(VERSION 3.19)
 
 project(sigmund_64bit-version)
+
+if (APPLE)
+    if (NOT CMAKE_OSX_ARCHITECTURES)
+        set(CMAKE_OSX_ARCHITECTURES "x86_64;arm64" CACHE STRING "macOS architecture" FORCE)
+    endif()
+endif()
+
+
 
 # Fetch the correct verion of the max-api
 message(STATUS "Updating Git Submodules")
@@ -11,7 +19,7 @@ execute_process(
 
 
 # Misc setup and subroutines
-include(${CMAKE_CURRENT_SOURCE_DIR}/source/max-api/script/max-package.cmake)
+include(${CMAKE_CURRENT_SOURCE_DIR}/source/max-sdk-base/script/max-package.cmake)
 
 
 # Generate a project for every folder in the "source/projects" folder

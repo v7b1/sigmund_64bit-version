@@ -1,12 +1,12 @@
 {
 	"author" : "vboehm",
 	"description" : "A 64-bit version of the popular sigmund~ object by Miller Puckette",
-	"homepatcher" : "blah.maxpat",
+	"homepatcher" : "",
 	"max_version_min" : "8.1",
 	"name" : "sigmund_64bit-version",
 	"os" : {
 		"macintosh" : {
-			"platform" : [ "x64" ],
+			"platform" : [ "x64", "arm64" ],
 			"min_version" : "none"
 		},
 		"windows" : {
