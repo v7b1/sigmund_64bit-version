@@ -839,7 +839,7 @@ typedef struct _sigmund
     int x_nvarout;
     t_sample x_sr;         /* sample rate */
     int x_mode;         /* MODE_STREAM, etc. */
-    int x_npts;         /* number of points in analysis window */
+    long x_npts;         /* number of points in analysis window */
     int x_npeak;        /* number of peaks to find */
     int x_loud;         /* debug level */
     t_sample *x_inbuf;  /* input buffer */
@@ -1299,7 +1299,8 @@ static void *sigmund_new(t_symbol *s, long ac, t_atom *av)
 void sigmund_npts_set(t_sigmund *x, void *attr, long ac, t_atom *av)
 {
     if (ac && av)
-        sigmund_npts(x, atom_getfloat(av));
+        sigmund_npts(x, atom_getlong(av));
+//        sigmund_npts(x, atom_getfloat(av));
 }
 
 void sigmund_hop_set(t_sigmund *x, void *attr, long ac, t_atom *av)
